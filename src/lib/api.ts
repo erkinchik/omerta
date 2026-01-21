@@ -1,7 +1,13 @@
 import axios from 'axios';
 
+// Get API URL and remove trailing slash if present
+const getApiUrl = () => {
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  return url.endsWith('/') ? url.slice(0, -1) : url;
+};
+
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
+  baseURL: getApiUrl(),
   headers: {
     'Content-Type': 'application/json',
   },
