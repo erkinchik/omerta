@@ -5,6 +5,7 @@ import { sessionsApi, Session } from '@/lib/api';
 import StationCard from '@/components/StationCard';
 import AddItemModal from '@/components/AddItemModal';
 import SessionSummaryModal from '@/components/SessionSummaryModal';
+import StartSessionModal from '@/components/StartSessionModal';
 import { Gamepad2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -59,6 +60,12 @@ export default function Home() {
   const [completedSession, setCompletedSession] = useState<Session | null>(null);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
   const [stoppingSessionId, setStoppingSessionId] = useState<string | null>(null);
+  const [showStartSessionModal, setShowStartSessionModal] = useState(false);
+  const [selectedStationForStart, setSelectedStationForStart] = useState<{
+    id: string;
+    name: string;
+    type: 'COMMON_HALL' | 'CABIN';
+  } | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -92,11 +99,21 @@ export default function Home() {
     return station?.name || stationId;
   };
 
-  const handleStart = async (type: 'COMMON_HALL' | 'CABIN', stationId: string) => {
+  const handleStart = async (
+    type: 'COMMON_HALL' | 'CABIN',
+    stationId: string,
+    startTime?: string,
+    durationMinutes?: number,
+  ) => {
     try {
       const stationName = getStationName(stationId);
       // Send station name (e.g., "Зал 1", "Кабина 1") instead of ID (e.g., "PS1")
-      const session = await sessionsApi.start({ type, stationId: stationName });
+      const session = await sessionsApi.start({
+        type,
+        stationId: stationName,
+        startTime,
+        durationMinutes,
+      });
       await loadActiveSessions();
       toast({
         title: "Сессия начата",
@@ -110,6 +127,33 @@ export default function Home() {
         variant: "destructive",
       });
     }
+  };
+
+  const handleStartWithParams = (type: 'COMMON_HALL' | 'CABIN', stationId: string) => {
+    const stationName = getStationName(stationId);
+    setSelectedStationForStart({
+      id: stationId,
+      name: stationName,
+      type,
+    });
+    setShowStartSessionModal(true);
+  };
+
+  const handleStartWithParamsSubmit = async (
+    startTime: string | undefined,
+    durationMinutes: number | undefined,
+  ) => {
+    if (!selectedStationForStart) return;
+
+    await handleStart(
+      selectedStationForStart.type,
+      selectedStationForStart.id,
+      startTime,
+      durationMinutes,
+    );
+
+    setShowStartSessionModal(false);
+    setSelectedStationForStart(null);
   };
 
   const handleStop = async (sessionId: string) => {
@@ -185,6 +229,7 @@ export default function Home() {
                   activeSession={activeSession}
                   isStopping={isStopping}
                   onStart={() => handleStart(station.type, station.id)}
+                  onStartWithParams={() => handleStartWithParams(station.type, station.id)}
                   onStop={() => activeSession && handleStop(activeSession.id)}
                   onAddItem={() => activeSession && handleAddItem(activeSession)}
                 />
@@ -210,6 +255,7 @@ export default function Home() {
                   activeSession={activeSession}
                   isStopping={isStopping}
                   onStart={() => handleStart(cabin.type, cabin.id)}
+                  onStartWithParams={() => handleStartWithParams(cabin.type, cabin.id)}
                   onStop={() => activeSession && handleStop(activeSession.id)}
                   onAddItem={() => activeSession && handleAddItem(activeSession)}
                 />
@@ -238,6 +284,19 @@ export default function Home() {
               setShowSummaryModal(false);
               setCompletedSession(null);
             }}
+          />
+        )}
+
+        {/* Start Session Modal */}
+        {showStartSessionModal && selectedStationForStart && (
+          <StartSessionModal
+            stationName={selectedStationForStart.name}
+            stationType={selectedStationForStart.type}
+            onClose={() => {
+              setShowStartSessionModal(false);
+              setSelectedStationForStart(null);
+            }}
+            onStart={handleStartWithParamsSubmit}
           />
         )}
       </div>

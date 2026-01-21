@@ -28,6 +28,8 @@ export interface SessionItem {
 export interface StartSessionRequest {
   type: 'COMMON_HALL' | 'CABIN';
   stationId: string;
+  startTime?: string; // ISO 8601 format
+  durationMinutes?: number; // Duration in minutes
 }
 
 export interface StopSessionRequest {

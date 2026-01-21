@@ -19,6 +19,7 @@ interface StationCardProps {
   activeSession?: Session;
   isStopping?: boolean;
   onStart: () => void;
+  onStartWithParams: () => void;
   onStop: () => void;
   onAddItem: () => void;
 }
@@ -28,6 +29,7 @@ export default function StationCard({
   activeSession,
   isStopping = false,
   onStart,
+  onStartWithParams,
   onStop,
   onAddItem,
 }: StationCardProps) {
@@ -100,12 +102,21 @@ export default function StationCard({
 
         <div className="flex gap-2 flex-wrap">
           {!isActive ? (
-            <Button
-              onClick={onStart}
-              className="flex-1 min-w-0 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-md text-xs sm:text-sm px-2"
-            >
-              <span className="truncate">Начать сессию</span>
-            </Button>
+            <>
+              <Button
+                onClick={onStart}
+                className="flex-1 min-w-0 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-md text-xs sm:text-sm px-2"
+              >
+                <span className="truncate">Начать сессию</span>
+              </Button>
+              <Button
+                onClick={onStartWithParams}
+                variant="outline"
+                className="flex-1 min-w-0 shadow-md text-xs sm:text-sm px-2 border-green-500 text-green-700 hover:bg-green-50"
+              >
+                <span className="truncate">С параметрами</span>
+              </Button>
+            </>
           ) : (
             <>
               <Button

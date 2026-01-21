@@ -26,6 +26,9 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
+.env.production
+# Note: .env.example should be committed to the repository
 
 # vercel
 .vercel
