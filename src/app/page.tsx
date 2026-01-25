@@ -12,13 +12,16 @@ import { useToast } from '@/hooks/use-toast';
 // Console configuration: 8 consoles total
 // 5 consoles in common hall (all PS5)
 // 3 consoles in private booths (all PS5)
-const PS3_CONSOLES = []; // No PS3 consoles
+const PS3_CONSOLES: number[] = []; // No PS3 consoles
 const BOOTH_CONSOLES = [3, 6, 8]; // Console numbers that are in private booths
 
 // Generate all 8 consoles with proper naming
 const ALL_CONSOLES = Array.from({ length: 8 }, (_, i) => {
   const consoleNumber = i + 1;
   const isInBooth = BOOTH_CONSOLES.includes(consoleNumber);
+  // #region agent log
+  fetch('http://127.0.0.1:7244/ingest/8b43ea41-9560-4d33-a7d9-62b5a641a4a4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:22',message:'PS3_CONSOLES type check',data:{consoleNumber,ps3Consoles:PS3_CONSOLES,isPS3:PS3_CONSOLES.includes(consoleNumber),typeCheck:Array.isArray(PS3_CONSOLES)},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'A'})}).catch(()=>{});
+  // #endregion
   const isPS3 = PS3_CONSOLES.includes(consoleNumber);
   const consoleType: 'PS3' | 'PS5' = isPS3 ? 'PS3' : 'PS5';
   
