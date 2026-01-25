@@ -10,9 +10,9 @@ import { Gamepad2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 // Console configuration: 8 consoles total
-// 5 consoles in common hall (1 PS3, 4 PS5)
+// 5 consoles in common hall (all PS5)
 // 3 consoles in private booths (all PS5)
-const PS3_CONSOLES = [2]; // Console #2 is PS3 (in common hall)
+const PS3_CONSOLES = []; // No PS3 consoles
 const BOOTH_CONSOLES = [3, 6, 8]; // Console numbers that are in private booths
 
 // Generate all 8 consoles with proper naming
